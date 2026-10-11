@@ -1,0 +1,12 @@
+{
+  "203028932093": {
+    "id": "203028932093",
+    "name": "Luauvanguard Universal Loader",
+    "game": "Universal",
+    "description": "Loader con UI propia · sin key",
+    "author": "Luauvanguard",
+    "createdAt": "2026-10-11T00:00:00.000Z",
+    "updatedAt": "2026-10-11T00:00:00.000Z",
+    "code": "-- paste your loader here"
+  }
+}

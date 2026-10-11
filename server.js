@@ -6,8 +6,8 @@ const crypto = require("crypto");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const ADMIN_TOKEN = process.env.ADMIN_TOKEN || "changeme-luau-token";
 const PANEL_PASSWORD = process.env.PANEL_PASSWORD || "luau2026";
+const ADMIN_TOKEN = process.env.ADMIN_TOKEN || process.env.PANEL_PASSWORD || "luau2026";
 
 const DATA_FILE = path.join(__dirname, "data", "scripts.json");
 
@@ -37,9 +37,14 @@ function newId() {
 }
 
 function auth(req, res, next) {
-  const token = req.headers["x-admin-token"] || req.query.token;
-  if (token !== ADMIN_TOKEN) {
-    return res.status(401).json({ ok: false, error: "unauthorized" });
+  const token = req.headers["x-admin-token"] || req.query.token || "";
+  const allowed = new Set([ADMIN_TOKEN, PANEL_PASSWORD].filter(Boolean));
+  if (!allowed.has(token)) {
+    return res.status(401).json({
+      ok: false,
+      error: "unauthorized",
+      hint: "Pon la misma contraseña del panel en Admin token (default: luau2026)",
+    });
   }
   next();
 }

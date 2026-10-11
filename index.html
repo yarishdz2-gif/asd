@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Luauvanguard · Scripts API</title>
+  <style>
+    :root {
+      --bg: #140f14;
+      --panel: #1a151a;
+      --card: #1c161c;
+      --border: #282028;
+      --text: #e9e5ea;
+      --muted: #7d737e;
+      --accent: #ebc7f6;
+      --accent-dim: rgba(235, 199, 246, 0.15);
+      --ok: #78f0a0;
+      --err: #ff6b6b;
+      --warn: #f0b06c;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      background: radial-gradient(1200px 600px at 10% -10%, #2a1a2e 0%, transparent 50%),
+                  radial-gradient(900px 500px at 100% 0%, #1a1220 0%, transparent 45%),
+                  var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 32px 16px 64px;
+    }
+    .wrap { max-width: 960px; margin: 0 auto; }
+    header {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 16px; margin-bottom: 28px; flex-wrap: wrap;
+    }
+    .brand { display: flex; align-items: center; gap: 12px; }
+    .logo {
+      width: 42px; height: 42px; border-radius: 10px;
+      background: var(--accent-dim); border: 1px solid var(--border);
+      display: grid; place-items: center; color: var(--accent); font-weight: 700;
+    }
+    h1 { font-size: 1.35rem; font-weight: 700; letter-spacing: -0.02em; }
+    h1 span { color: var(--muted); font-weight: 500; font-size: 0.9rem; }
+    .badge {
+      font-size: 0.75rem; color: var(--ok); background: rgba(120,240,160,.1);
+      border: 1px solid rgba(120,240,160,.25); padding: 6px 10px; border-radius: 999px;
+    }
+    .grid { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 18px; }
+    @media (max-width: 800px) { .grid { grid-template-columns: 1fr; } }
+    .card {
+      background: var(--panel); border: 1px solid var(--border);
+      border-radius: 14px; padding: 18px; box-shadow: 0 20px 50px rgba(0,0,0,.35);
+    }
+    .card h2 { font-size: 0.85rem; color: var(--muted); font-weight: 600; margin-bottom: 14px; text-transform: uppercase; letter-spacing: .06em; }
+    label { display: block; font-size: 0.78rem; color: var(--muted); margin: 10px 0 6px; }
+    input, textarea, select {
+      width: 100%; background: #181318; border: 1px solid var(--border);
+      color: var(--text); border-radius: 10px; padding: 10px 12px; font-size: 0.9rem;
+      outline: none; transition: border .15s;
+    }
+    input:focus, textarea:focus { border-color: var(--accent); }
+    textarea { min-height: 160px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.82rem; resize: vertical; }
+    .row { display: flex; gap: 10px; flex-wrap: wrap; }
+    .row > * { flex: 1; min-width: 120px; }
+    button {
+      cursor: pointer; border: none; border-radius: 10px; padding: 11px 16px;
+      font-weight: 600; font-size: 0.88rem; transition: transform .1s, opacity .15s;
+    }
+    button:active { transform: scale(0.98); }
+    .btn-primary { background: var(--accent); color: #18121a; }
+    .btn-ghost { background: #2a222c; color: var(--text); border: 1px solid var(--border); }
+    .btn-danger { background: rgba(255,107,107,.15); color: var(--err); border: 1px solid rgba(255,107,107,.3); }
+    .actions { display: flex; gap: 8px; margin-top: 14px; flex-wrap: wrap; }
+    .list { display: flex; flex-direction: column; gap: 8px; max-height: 520px; overflow: auto; }
+    .item {
+      background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+      padding: 12px 14px; display: flex; justify-content: space-between; gap: 10px; align-items: center;
+    }
+    .item strong { display: block; font-size: 0.92rem; }
+    .item small { color: var(--muted); font-size: 0.75rem; }
+    .item .id { color: var(--accent); font-family: ui-monospace, monospace; font-size: 0.72rem; }
+    .item-actions { display: flex; gap: 6px; flex-shrink: 0; }
+    .item-actions button { padding: 7px 10px; font-size: 0.75rem; }
+    .status { margin-top: 12px; font-size: 0.82rem; color: var(--muted); min-height: 1.2em; }
+    .status.ok { color: var(--ok); }
+    .status.err { color: var(--err); }
+    code {
+      background: #181318; border: 1px solid var(--border); padding: 2px 6px;
+      border-radius: 6px; font-size: 0.78rem; color: var(--accent);
+    }
+    .help { margin-top: 18px; font-size: 0.8rem; color: var(--muted); line-height: 1.55; }
+    .help code { word-break: break-all; }
+
+    .lock {
+      position: fixed; inset: 0; z-index: 1000;
+      background: radial-gradient(900px 500px at 50% 0%, #2a1a2e 0%, #0e0a0e 70%);
+      display: grid; place-items: center; padding: 20px;
+    }
+    .lock.hidden { display: none; }
+    .lock-card {
+      width: min(380px, 100%); background: #1a151a; border: 1px solid #282028;
+      border-radius: 16px; padding: 28px 24px; box-shadow: 0 30px 80px rgba(0,0,0,.5);
+    }
+    .lock-card h2 { font-size: 1.2rem; margin-bottom: 6px; }
+    .lock-card p { color: var(--muted); font-size: 0.85rem; margin-bottom: 18px; }
+    .app-hidden { display: none !important; }
+  </style>
+</head>
+<body>
+  <div class="lock" id="lock">
+    <div class="lock-card">
+      <h2>Luauvanguard</h2>
+      <p>Introduce la contraseña para entrar al panel</p>
+      <label>Contraseña</label>
+      <input id="loginPass" type="password" placeholder="Password" autocomplete="current-password" />
+      <div class="actions">
+        <button class="btn-primary" id="btnLogin" style="width:100%">Entrar</button>
+      </div>
+      <div class="status" id="loginStatus"></div>
+    </div>
+  </div>
+
+  <div class="wrap app-hidden" id="app">
+    <header>
+      <div class="brand">
+        <div class="logo">LV</div>
+        <div>
+          <h1>Luauvanguard <span>/ Scripts API</span></h1>
+        </div>
+      </div>
+      <div class="badge">No key · /api/v1/:id</div>
+    </header>
+
+    <div class="grid">
+      <section class="card">
+        <h2>Crear / Editar script</h2>
+        <div class="row">
+          <div>
+            <label>Nombre</label>
+            <input id="name" placeholder="Universal Loader" />
+          </div>
+          <div>
+            <label>Juego</label>
+            <input id="game" placeholder="Rivals / Arsenal / Universal" />
+          </div>
+        </div>
+        <label>Descripción</label>
+        <input id="description" placeholder="Loader con UI propia" />
+        <label>Author</label>
+        <input id="author" value="Luauvanguard" />
+        <label>ID (opcional, ej. 203028932093)</label>
+        <input id="id" placeholder="auto si vacío" />
+        <label>Código Lua</label>
+        <textarea id="code" placeholder="-- tu script aquí"></textarea>
+        <label>Admin token</label>
+        <input id="token" type="password" placeholder="Misma que la del login (luau2026)" value="" />
+        <div class="actions">
+          <button class="btn-primary" id="btnCreate">Crear</button>
+          <button class="btn-ghost" id="btnUpdate">Actualizar por ID</button>
+          <button class="btn-ghost" id="btnClear">Limpiar</button>
+        </div>
+        <div class="status" id="status"></div>
+        <div class="help">
+          <div><b>GET</b> <code>/api/v1</code> — lista</div>
+          <div><b>GET</b> <code>/api/v1/203028932093</code> — JSON + code</div>
+          <div><b>GET</b> <code>/api/v1/203028932093/raw</code> — solo Lua (HttpGet)</div>
+          <div><b>POST/PUT/DELETE</b> con header <code>x-admin-token</code></div>
+          <div style="margin-top:8px">Roblox:</div>
+          <div><code>loadstring(game:HttpGet("https://TU_DOMINIO/api/v1/ID/raw"))()</code></div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Scripts en la base</h2>
+        <div class="list" id="list"></div>
+      </section>
+    </div>
+  </div>
+  </div>
+
+  <script>
+
+    // ===== ACCESS PASSWORD =====
+    // Cambia esto o usa window.__PANEL_PASS desde env inyectado
+    const PANEL_PASSWORD = "luau2026";
+    const AUTH_KEY = "luau_panel_auth_v1";
+
+    function isAuthed() {
+      try {
+        const raw = sessionStorage.getItem(AUTH_KEY);
+        if (!raw) return false;
+        const data = JSON.parse(raw);
+        return data && data.ok === true && data.p === PANEL_PASSWORD;
+      } catch { return false; }
+    }
+
+    function setAuthed(ok) {
+      if (ok) {
+        sessionStorage.setItem(AUTH_KEY, JSON.stringify({ ok: true, p: PANEL_PASSWORD }));
+      } else {
+        sessionStorage.removeItem(AUTH_KEY);
+      }
+    }
+
+    function showApp() {
+      document.getElementById("lock").classList.add("hidden");
+      document.getElementById("app").classList.remove("app-hidden");
+    }
+
+    function tryLogin() {
+      const pass = document.getElementById("loginPass").value;
+      const st = document.getElementById("loginStatus");
+      if (pass === PANEL_PASSWORD) {
+        setAuthed(true);
+        st.textContent = "";
+        try {
+          const tok = document.getElementById("token");
+          if (tok && !tok.value) tok.value = PANEL_PASSWORD;
+        } catch {}
+        showApp();
+        loadList().catch(() => {});
+      } else {
+        st.textContent = "Contraseña incorrecta";
+        st.className = "status err";
+      }
+    }
+
+    document.getElementById("btnLogin").addEventListener("click", tryLogin);
+    document.getElementById("loginPass").addEventListener("keydown", (e) => {
+      if (e.key === "Enter") tryLogin();
+    });
+
+    if (isAuthed()) {
+      try {
+        const tok = document.getElementById("token");
+        if (tok && !tok.value) tok.value = PANEL_PASSWORD;
+      } catch {}
+      showApp();
+    }
+
+    const $ = (id) => document.getElementById(id);
+    const statusEl = $("status");
+
+    function setStatus(msg, type) {
+      statusEl.textContent = msg;
+      statusEl.className = "status " + (type || "");
+    }
+
+    function headers() {
+      const h = { "Content-Type": "application/json" };
+      let t = $("token").value.trim();
+      if (!t) t = PANEL_PASSWORD;
+      h["x-admin-token"] = t;
+      return h;
+    }
+
+    async function loadList() {
+      const res = await fetch("/api/v1");
+      const data = await res.json();
+      const list = $("list");
+      list.innerHTML = "";
+      if (!data.scripts || !data.scripts.length) {
+        list.innerHTML = "<div class='item'><small>No hay scripts todavía</small></div>";
+        return;
+      }
+      for (const s of data.scripts) {
+        const el = document.createElement("div");
+        el.className = "item";
+        el.innerHTML = `
+          <div>
+            <strong>${escapeHtml(s.name)}</strong>
+            <small>${escapeHtml(s.game || "")} · ${escapeHtml(s.author || "")}</small>
+            <div class="id">${escapeHtml(s.id)}</div>
+          </div>
+          <div class="item-actions">
+            <button class="btn-ghost" data-load="${s.id}">Edit</button>
+            <button class="btn-ghost" data-copy="${s.id}">Raw</button>
+            <button class="btn-danger" data-del="${s.id}">Del</button>
+          </div>`;
+        list.appendChild(el);
+      }
+      list.querySelectorAll("[data-load]").forEach((b) =>
+        b.addEventListener("click", () => editScript(b.getAttribute("data-load")))
+      );
+      list.querySelectorAll("[data-copy]").forEach((b) =>
+        b.addEventListener("click", () => {
+          const url = location.origin + "/api/v1/" + b.getAttribute("data-copy") + "/raw";
+          navigator.clipboard.writeText(url);
+          setStatus("Raw URL copiada: " + url, "ok");
+        })
+      );
+      list.querySelectorAll("[data-del]").forEach((b) =>
+        b.addEventListener("click", () => delScript(b.getAttribute("data-del")))
+      );
+    }
+
+    function escapeHtml(s) {
+      return String(s).replace(/[&<>"']/g, (c) =>
+        ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c])
+      );
+    }
+
+    async function editScript(id) {
+      const res = await fetch("/api/v1/" + id);
+      const data = await res.json();
+      if (!data.ok) return setStatus(data.error || "error", "err");
+      const s = data.script;
+      $("id").value = s.id;
+      $("name").value = s.name || "";
+      $("game").value = s.game || "";
+      $("description").value = s.description || "";
+      $("author").value = s.author || "";
+      $("code").value = s.code || "";
+      setStatus("Cargado " + s.id, "ok");
+    }
+
+    async function delScript(id) {
+      if (!confirm("¿Borrar " + id + "?")) return;
+      const res = await fetch("/api/v1/" + id, { method: "DELETE", headers: headers() });
+      const data = await res.json();
+      if (!data.ok) return setStatus(data.error || "error", "err");
+      setStatus("Borrado " + id, "ok");
+      loadList();
+    }
+
+    $("btnCreate").onclick = async () => {
+      const body = {
+        id: $("id").value.trim() || undefined,
+        name: $("name").value.trim(),
+        game: $("game").value.trim(),
+        description: $("description").value.trim(),
+        author: $("author").value.trim(),
+        code: $("code").value,
+      };
+      const res = await fetch("/api/v1", { method: "POST", headers: headers(), body: JSON.stringify(body) });
+      const data = await res.json();
+      if (!data.ok) return setStatus((data.error || "error") + (data.hint ? " — " + data.hint : ""), "err");
+      setStatus("Creado " + data.script.id, "ok");
+      $("id").value = data.script.id;
+      loadList();
+    };
+
+    $("btnUpdate").onclick = async () => {
+      const id = $("id").value.trim();
+      if (!id) return setStatus("Pon un ID para actualizar", "err");
+      const body = {
+        name: $("name").value.trim(),
+        game: $("game").value.trim(),
+        description: $("description").value.trim(),
+        author: $("author").value.trim(),
+        code: $("code").value,
+      };
+      const res = await fetch("/api/v1/" + id, { method: "PUT", headers: headers(), body: JSON.stringify(body) });
+      const data = await res.json();
+      if (!data.ok) return setStatus((data.error || "error") + (data.hint ? " — " + data.hint : ""), "err");
+      setStatus("Actualizado " + id, "ok");
+      loadList();
+    };
+
+    $("btnClear").onclick = () => {
+      ["id", "name", "game", "description", "code"].forEach((k) => $(k).value = "");
+      $("author").value = "Luauvanguard";
+      setStatus("Formulario limpio");
+    };
+
+    if (isAuthed()) loadList().catch((e) => setStatus(String(e), "err"));
+  </script>
+</body>
+</html>
