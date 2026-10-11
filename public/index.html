@@ -153,7 +153,7 @@
         <label>Código Lua</label>
         <textarea id="code" placeholder="-- tu script aquí"></textarea>
         <label>Admin token</label>
-        <input id="token" type="password" placeholder="Misma que la del login (luau2026)" value="" />
+        <input id="token" type="password" placeholder="luau2026" value="luau2026" />
         <div class="actions">
           <button class="btn-primary" id="btnCreate">Crear</button>
           <button class="btn-ghost" id="btnUpdate">Actualizar por ID</button>
@@ -332,12 +332,24 @@
         author: $("author").value.trim(),
         code: $("code").value,
       };
-      const res = await fetch("/api/v1", { method: "POST", headers: headers(), body: JSON.stringify(body) });
-      const data = await res.json();
-      if (!data.ok) return setStatus((data.error || "error") + (data.hint ? " — " + data.hint : ""), "err");
-      setStatus("Creado " + data.script.id, "ok");
-      $("id").value = data.script.id;
-      loadList();
+      if (!body.name) return setStatus("Pon un nombre", "err");
+      if (!body.code) return setStatus("Pon el codigo Lua", "err");
+      try {
+        const res = await fetch("/api/v1", { method: "POST", headers: headers(), body: JSON.stringify(body) });
+        const text = await res.text();
+        let data;
+        try { data = JSON.parse(text); } catch {
+          return setStatus("Respuesta invalida del server: " + text.slice(0, 120), "err");
+        }
+        if (!data.ok) {
+          return setStatus((data.error || "error") + (data.hint ? " — " + data.hint : ""), "err");
+        }
+        setStatus("Creado " + data.script.id + (data.note ? " (" + data.note + ")" : ""), "ok");
+        $("id").value = data.script.id;
+        loadList();
+      } catch (e) {
+        setStatus("Fetch fail: " + e, "err");
+      }
     };
 
     $("btnUpdate").onclick = async () => {
