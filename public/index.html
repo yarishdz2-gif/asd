@@ -153,7 +153,7 @@
         <label>Código Lua</label>
         <textarea id="code" placeholder="-- tu script aquí"></textarea>
         <label>Admin token</label>
-        <input id="token" type="password" placeholder="x-admin-token" />
+        <input id="token" type="password" placeholder="Misma que la del login (luau2026)" value="" />
         <div class="actions">
           <button class="btn-primary" id="btnCreate">Crear</button>
           <button class="btn-ghost" id="btnUpdate">Actualizar por ID</button>
@@ -213,6 +213,10 @@
       if (pass === PANEL_PASSWORD) {
         setAuthed(true);
         st.textContent = "";
+        try {
+          const tok = document.getElementById("token");
+          if (tok && !tok.value) tok.value = PANEL_PASSWORD;
+        } catch {}
         showApp();
         loadList().catch(() => {});
       } else {
@@ -227,6 +231,10 @@
     });
 
     if (isAuthed()) {
+      try {
+        const tok = document.getElementById("token");
+        if (tok && !tok.value) tok.value = PANEL_PASSWORD;
+      } catch {}
       showApp();
     }
 
@@ -240,8 +248,9 @@
 
     function headers() {
       const h = { "Content-Type": "application/json" };
-      const t = $("token").value.trim();
-      if (t) h["x-admin-token"] = t;
+      let t = $("token").value.trim();
+      if (!t) t = PANEL_PASSWORD;
+      h["x-admin-token"] = t;
       return h;
     }
 
@@ -325,7 +334,7 @@
       };
       const res = await fetch("/api/v1", { method: "POST", headers: headers(), body: JSON.stringify(body) });
       const data = await res.json();
-      if (!data.ok) return setStatus(data.error || "error", "err");
+      if (!data.ok) return setStatus((data.error || "error") + (data.hint ? " — " + data.hint : ""), "err");
       setStatus("Creado " + data.script.id, "ok");
       $("id").value = data.script.id;
       loadList();
@@ -343,7 +352,7 @@
       };
       const res = await fetch("/api/v1/" + id, { method: "PUT", headers: headers(), body: JSON.stringify(body) });
       const data = await res.json();
-      if (!data.ok) return setStatus(data.error || "error", "err");
+      if (!data.ok) return setStatus((data.error || "error") + (data.hint ? " — " + data.hint : ""), "err");
       setStatus("Actualizado " + id, "ok");
       loadList();
     };
