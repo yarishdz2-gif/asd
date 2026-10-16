@@ -11,9 +11,12 @@ const ADMIN_TOKEN = process.env.ADMIN_TOKEN || process.env.PANEL_PASSWORD || "lu
 const UPSTASH_URL = (process.env.UPSTASH_REDIS_REST_URL || "").replace(/\/$/, "");
 const UPSTASH_TOKEN = process.env.UPSTASH_REDIS_REST_TOKEN || "";
 const REDIS_KEY = process.env.REDIS_KEY || "luauvanguard:scripts";
+const REDIS_EXEC_KEY = process.env.REDIS_EXEC_KEY || "luauvanguard:executions";
+const MAX_EXECS = 300;
 
 const LOCAL_FILE = path.join(__dirname, "data", "scripts.json");
 const TMP_FILE = path.join("/tmp", "luau-scripts.json");
+const TMP_EXEC_FILE = path.join("/tmp", "luau-executions.json");
 
 app.use(cors());
 app.use(express.json({ limit: "5mb" }));
@@ -155,6 +158,90 @@ async function writeDB(db) {
   return backend;
 }
 
+async function redisGetExecs() {
+  const data = await redisCmd(["GET", REDIS_EXEC_KEY]);
+  if (!data || data.result == null || data.result === "") return [];
+  try {
+    const parsed = typeof data.result === "string" ? JSON.parse(data.result) : data.result;
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+async function redisSetExecs(list) {
+  const payload = JSON.stringify(list);
+  const res = await fetch(`${UPSTASH_URL}`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${UPSTASH_TOKEN}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(["SET", REDIS_EXEC_KEY, payload]),
+    cache: "no-store",
+  });
+  if (!res.ok) {
+    const t = await res.text();
+    throw new Error("Upstash exec SET fail: " + t.slice(0, 200));
+  }
+  return true;
+}
+
+async function readExecs() {
+  if (hasUpstash()) {
+    try {
+      const list = await redisGetExecs();
+      globalThis.__LUAU_EXECS = list;
+      return list;
+    } catch (e) {
+      console.error("redis exec read fail", e.message);
+    }
+  }
+  if (Array.isArray(globalThis.__LUAU_EXECS)) return globalThis.__LUAU_EXECS;
+  const fromFile = tryRead(TMP_EXEC_FILE);
+  const list = Array.isArray(fromFile) ? fromFile : [];
+  globalThis.__LUAU_EXECS = list;
+  return list;
+}
+
+async function writeExecs(list) {
+  const trimmed = list.slice(0, MAX_EXECS);
+  globalThis.__LUAU_EXECS = trimmed;
+  if (hasUpstash()) {
+    try {
+      await redisSetExecs(trimmed);
+    } catch (e) {
+      console.error("redis exec write fail", e.message);
+    }
+  }
+  tryWrite(TMP_EXEC_FILE, trimmed);
+  return trimmed;
+}
+
+async function logExecution(req, script) {
+  try {
+    const list = await readExecs();
+    const ip =
+      (req.headers["x-forwarded-for"] || "").toString().split(",")[0].trim() ||
+      req.headers["x-real-ip"] ||
+      req.socket?.remoteAddress ||
+      "";
+    const ua = String(req.headers["user-agent"] || "").slice(0, 120);
+    list.unshift({
+      id: String(Date.now()) + String(Math.floor(Math.random() * 900 + 100)),
+      scriptId: script.id,
+      scriptName: script.name || "",
+      game: script.game || "",
+      at: new Date().toISOString(),
+      ip: String(ip).slice(0, 64),
+      ua,
+    });
+    await writeExecs(list);
+  } catch (e) {
+    console.error("logExecution fail", e.message);
+  }
+}
+
 function newId() {
   return String(Date.now()) + String(Math.floor(Math.random() * 900 + 100));
 }
@@ -284,6 +371,8 @@ app.get("/api", async (_req, res) => {
       list: "GET /api/v1",
       get: "GET /api/v1/:id",
       raw: "GET /api/v1/:id/raw",
+      executions: "GET /api/v1/executions",
+      clearExecutions: "DELETE /api/v1/executions",
       create: "POST /api/v1",
       update: "PUT /api/v1/:id",
       delete: "DELETE /api/v1/:id",
@@ -324,6 +413,24 @@ app.get("/api/v1/scripts", async (_req, res) => {
   res.json({ ok: true, count: Object.keys(db).length, scripts: Object.values(db).map((s) => publicScript(s, false)) });
 });
 
+app.get("/api/v1/executions", auth, async (_req, res) => {
+  try {
+    const list = await readExecs();
+    res.json({ ok: true, count: list.length, executions: list });
+  } catch (e) {
+    res.status(500).json({ ok: false, error: String(e.message || e) });
+  }
+});
+
+app.delete("/api/v1/executions", auth, async (_req, res) => {
+  try {
+    await writeExecs([]);
+    res.json({ ok: true, cleared: true });
+  } catch (e) {
+    res.status(500).json({ ok: false, error: String(e.message || e) });
+  }
+});
+
 app.get("/api/v1/:id", async (req, res) => {
   const db = await readDB();
   const s = db[req.params.id];
@@ -343,6 +450,7 @@ app.get("/api/v1/:id/raw", async (req, res) => {
     res.setHeader("Cache-Control", "no-store");
     return res.status(403).type("html").send(blockedPage(script.id, script.name));
   }
+  logExecution(req, script).catch(() => {});
   res.setHeader("Cache-Control", "no-store");
   res.type("text/plain").send(script.code || "");
 });
@@ -357,6 +465,7 @@ app.get("/api/v1/:id/load", async (req, res) => {
   if (isBrowser(req)) {
     return res.status(403).type("html").send(blockedPage(script.id, script.name));
   }
+  logExecution(req, script).catch(() => {});
   res.type("text/plain").send(script.code || "");
 });
 
