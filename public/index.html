@@ -26,12 +26,12 @@
                   var(--bg);
       color: var(--text);
       min-height: 100vh;
-      padding: 32px 16px 64px;
+      padding: 28px 16px 64px;
     }
-    .wrap { max-width: 960px; margin: 0 auto; }
+    .wrap { max-width: 1080px; margin: 0 auto; }
     header {
       display: flex; align-items: center; justify-content: space-between;
-      gap: 16px; margin-bottom: 28px; flex-wrap: wrap;
+      gap: 16px; margin-bottom: 20px; flex-wrap: wrap;
     }
     .brand { display: flex; align-items: center; gap: 12px; }
     .logo {
@@ -39,62 +39,101 @@
       background: var(--accent-dim); border: 1px solid var(--border);
       display: grid; place-items: center; color: var(--accent); font-weight: 700;
     }
-    h1 { font-size: 1.35rem; font-weight: 700; letter-spacing: -0.02em; }
-    h1 span { color: var(--muted); font-weight: 500; font-size: 0.9rem; }
+    h1 { font-size: 1.3rem; font-weight: 700; letter-spacing: -0.02em; }
+    h1 span { color: var(--muted); font-weight: 500; font-size: 0.88rem; }
     .badge {
-      font-size: 0.75rem; color: var(--ok); background: rgba(120,240,160,.1);
+      font-size: 0.72rem; color: var(--ok); background: rgba(120,240,160,.1);
       border: 1px solid rgba(120,240,160,.25); padding: 6px 10px; border-radius: 999px;
     }
-    .grid { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 18px; }
-    @media (max-width: 800px) { .grid { grid-template-columns: 1fr; } }
+    .badge.warn { color: var(--warn); background: rgba(240,176,108,.1); border-color: rgba(240,176,108,.3); }
+    .tabs {
+      display: flex; gap: 6px; margin-bottom: 18px; flex-wrap: wrap;
+      border-bottom: 1px solid var(--border); padding-bottom: 10px;
+    }
+    .tab {
+      background: transparent; border: 1px solid transparent; color: var(--muted);
+      padding: 8px 14px; border-radius: 10px; cursor: pointer; font-size: 0.88rem; font-weight: 600;
+    }
+    .tab:hover { color: var(--text); background: #221c22; }
+    .tab.active {
+      color: var(--accent); background: var(--accent-dim); border-color: rgba(235,199,246,.25);
+    }
+    .panel { display: none; }
+    .panel.active { display: block; }
+    .grid { display: grid; grid-template-columns: 1.15fr 0.85fr; gap: 18px; }
+    @media (max-width: 860px) { .grid { grid-template-columns: 1fr; } }
     .card {
       background: var(--panel); border: 1px solid var(--border);
       border-radius: 14px; padding: 18px; box-shadow: 0 20px 50px rgba(0,0,0,.35);
     }
-    .card h2 { font-size: 0.85rem; color: var(--muted); font-weight: 600; margin-bottom: 14px; text-transform: uppercase; letter-spacing: .06em; }
+    .card h2 {
+      font-size: 0.8rem; color: var(--muted); font-weight: 600;
+      margin-bottom: 14px; text-transform: uppercase; letter-spacing: .06em;
+    }
     label { display: block; font-size: 0.78rem; color: var(--muted); margin: 10px 0 6px; }
     input, textarea, select {
       width: 100%; background: #181318; border: 1px solid var(--border);
       color: var(--text); border-radius: 10px; padding: 10px 12px; font-size: 0.9rem;
-      outline: none; transition: border .15s;
+      outline: none;
     }
-    input:focus, textarea:focus { border-color: var(--accent); }
-    textarea { min-height: 160px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.82rem; resize: vertical; }
-    .row { display: flex; gap: 10px; flex-wrap: wrap; }
-    .row > * { flex: 1; min-width: 120px; }
+    input:focus, textarea:focus { border-color: rgba(235,199,246,.4); }
+    textarea { min-height: 180px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.82rem; resize: vertical; }
+    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    @media (max-width: 560px) { .row { grid-template-columns: 1fr; } }
+    .actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 14px; }
     button {
-      cursor: pointer; border: none; border-radius: 10px; padding: 11px 16px;
-      font-weight: 600; font-size: 0.88rem; transition: transform .1s, opacity .15s;
+      border: none; border-radius: 10px; padding: 10px 14px; font-weight: 600;
+      font-size: 0.86rem; cursor: pointer;
     }
-    button:active { transform: scale(0.98); }
-    .btn-primary { background: var(--accent); color: #18121a; }
+    .btn-primary { background: var(--accent); color: #1a1018; }
+    .btn-primary:hover { filter: brightness(1.05); }
     .btn-ghost { background: #2a222c; color: var(--text); border: 1px solid var(--border); }
+    .btn-ghost:hover { background: #322a34; }
     .btn-danger { background: rgba(255,107,107,.15); color: var(--err); border: 1px solid rgba(255,107,107,.3); }
-    .actions { display: flex; gap: 8px; margin-top: 14px; flex-wrap: wrap; }
-    .list { display: flex; flex-direction: column; gap: 8px; max-height: 520px; overflow: auto; }
-    .item {
-      background: var(--card); border: 1px solid var(--border); border-radius: 12px;
-      padding: 12px 14px; display: flex; justify-content: space-between; gap: 10px; align-items: center;
-    }
-    .item strong { display: block; font-size: 0.92rem; }
-    .item small { color: var(--muted); font-size: 0.75rem; }
-    .item .id { color: var(--accent); font-family: ui-monospace, monospace; font-size: 0.72rem; }
-    .item-actions { display: flex; gap: 6px; flex-shrink: 0; }
-    .item-actions button { padding: 7px 10px; font-size: 0.75rem; }
+    .btn-danger:hover { background: rgba(255,107,107,.25); }
     .status { margin-top: 12px; font-size: 0.82rem; color: var(--muted); min-height: 1.2em; }
     .status.ok { color: var(--ok); }
     .status.err { color: var(--err); }
-    code {
-      background: #181318; border: 1px solid var(--border); padding: 2px 6px;
-      border-radius: 6px; font-size: 0.78rem; color: var(--accent);
+    .list { display: flex; flex-direction: column; gap: 8px; max-height: 620px; overflow: auto; }
+    .item {
+      display: flex; justify-content: space-between; gap: 10px; align-items: flex-start;
+      background: #181318; border: 1px solid var(--border); border-radius: 12px; padding: 12px;
     }
-    .help { margin-top: 18px; font-size: 0.8rem; color: var(--muted); line-height: 1.55; }
-    .help code { word-break: break-all; }
-
+    .item strong { display: block; font-size: 0.92rem; }
+    .item small { color: var(--muted); font-size: 0.75rem; }
+    .item .id { font-family: ui-monospace, monospace; font-size: 0.72rem; color: var(--accent); margin-top: 4px; word-break: break-all; }
+    .item-actions { display: flex; gap: 6px; flex-wrap: wrap; flex-shrink: 0; }
+    .item-actions button { padding: 7px 10px; font-size: 0.75rem; }
+    .help {
+      margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--border);
+      font-size: 0.78rem; color: var(--muted); line-height: 1.55;
+    }
+    .help code {
+      background: #141014; padding: 2px 6px; border-radius: 6px; color: var(--accent); font-size: 0.74rem;
+    }
+    .help b { color: var(--text); }
+    .search-row { display: flex; gap: 8px; margin-bottom: 12px; }
+    .search-row input { flex: 1; }
+    .exec-meta { font-size: 0.72rem; color: var(--muted); margin-top: 4px; }
+    .stats {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 16px;
+    }
+    @media (max-width: 560px) { .stats { grid-template-columns: 1fr; } }
+    .stat {
+      background: #181318; border: 1px solid var(--border); border-radius: 12px; padding: 14px;
+      text-align: center;
+    }
+    .stat .n { font-size: 1.5rem; font-weight: 800; color: var(--accent); }
+    .stat .l { font-size: 0.72rem; color: var(--muted); margin-top: 4px; text-transform: uppercase; letter-spacing: .05em; }
+    .api-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+    .api-table th, .api-table td {
+      text-align: left; padding: 10px 8px; border-bottom: 1px solid var(--border); vertical-align: top;
+    }
+    .api-table th { color: var(--muted); font-weight: 600; font-size: 0.72rem; text-transform: uppercase; }
+    .api-table code { color: var(--accent); font-size: 0.78rem; }
     .lock {
-      position: fixed; inset: 0; z-index: 1000;
-      background: radial-gradient(900px 500px at 50% 0%, #2a1a2e 0%, #0e0a0e 70%);
-      display: grid; place-items: center; padding: 20px;
+      position: fixed; inset: 0; background: rgba(10,8,12,.92); display: grid; place-items: center;
+      z-index: 50; padding: 20px;
     }
     .lock.hidden { display: none; }
     .lock-card {
@@ -104,6 +143,8 @@
     .lock-card h2 { font-size: 1.2rem; margin-bottom: 6px; }
     .lock-card p { color: var(--muted); font-size: 0.85rem; margin-bottom: 18px; }
     .app-hidden { display: none !important; }
+    .toolbar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; align-items: center; }
+    .empty { color: var(--muted); font-size: 0.85rem; padding: 16px 4px; }
   </style>
 </head>
 <body>
@@ -128,59 +169,127 @@
           <h1>Luauvanguard <span>/ Scripts API</span></h1>
         </div>
       </div>
-      <div class="badge">No key · /api/v1/:id</div>
+      <div class="badge" id="storageBadge">storage…</div>
     </header>
 
-    <div class="grid">
+    <div class="tabs">
+      <button class="tab active" data-tab="scripts">Scripts</button>
+      <button class="tab" data-tab="execs">Ejecuciones</button>
+      <button class="tab" data-tab="stats">Stats</button>
+      <button class="tab" data-tab="api">API</button>
+    </div>
+
+    <div class="panel active" id="panel-scripts">
+      <div class="grid">
+        <section class="card">
+          <h2>Crear / Editar script</h2>
+          <div class="row">
+            <div>
+              <label>Nombre</label>
+              <input id="name" placeholder="Universal Loader" />
+            </div>
+            <div>
+              <label>Juego</label>
+              <input id="game" placeholder="Rivals / Arsenal / Universal" />
+            </div>
+          </div>
+          <label>Descripción</label>
+          <input id="description" placeholder="Loader con UI propia" />
+          <label>Author</label>
+          <input id="author" value="Luauvanguard" />
+          <label>ID (opcional)</label>
+          <input id="id" placeholder="auto si vacío" />
+          <label>Código Lua</label>
+          <textarea id="code" placeholder="-- tu script aquí"></textarea>
+          <label>Admin token</label>
+          <input id="token" type="password" placeholder="luau2026" value="luau2026" />
+          <div class="actions">
+            <button class="btn-primary" id="btnCreate">Crear</button>
+            <button class="btn-ghost" id="btnUpdate">Actualizar</button>
+            <button class="btn-ghost" id="btnClear">Limpiar</button>
+            <button class="btn-ghost" id="btnCopyLoad">Copiar loadstring</button>
+          </div>
+          <div class="status" id="status"></div>
+          <div class="help">
+            <div><b>Roblox:</b></div>
+            <div><code id="loadPreview">loadstring(game:HttpGet("…/api/v1/ID/raw"))()</code></div>
+            <div style="margin-top:8px">Persistencia: <code>UPSTASH_REDIS_REST_URL</code> + <code>UPSTASH_REDIS_REST_TOKEN</code></div>
+          </div>
+        </section>
+
+        <section class="card">
+          <h2>Scripts en la base</h2>
+          <div class="search-row">
+            <input id="searchScripts" placeholder="Buscar por nombre, juego o ID…" />
+            <button class="btn-ghost" id="btnRefreshScripts">↻</button>
+          </div>
+          <div class="list" id="list"></div>
+        </section>
+      </div>
+    </div>
+
+    <div class="panel" id="panel-execs">
       <section class="card">
-        <h2>Crear / Editar script</h2>
-        <div class="row">
-          <div>
-            <label>Nombre</label>
-            <input id="name" placeholder="Universal Loader" />
-          </div>
-          <div>
-            <label>Juego</label>
-            <input id="game" placeholder="Rivals / Arsenal / Universal" />
-          </div>
+        <h2>Ejecuciones de scripts</h2>
+        <div class="toolbar">
+          <button class="btn-ghost" id="btnRefreshExecs">Actualizar</button>
+          <button class="btn-danger" id="btnClearExecs">Limpiar log</button>
+          <span class="status" id="execStatus" style="margin:0"></span>
         </div>
-        <label>Descripción</label>
-        <input id="description" placeholder="Loader con UI propia" />
-        <label>Author</label>
-        <input id="author" value="Luauvanguard" />
-        <label>ID (opcional, ej. 203028932093)</label>
-        <input id="id" placeholder="auto si vacío" />
-        <label>Código Lua</label>
-        <textarea id="code" placeholder="-- tu script aquí"></textarea>
-        <label>Admin token</label>
-        <input id="token" type="password" placeholder="luau2026" value="luau2026" />
-        <div class="actions">
-          <button class="btn-primary" id="btnCreate">Crear</button>
-          <button class="btn-ghost" id="btnUpdate">Actualizar por ID</button>
-          <button class="btn-ghost" id="btnClear">Limpiar</button>
+        <div class="search-row">
+          <input id="searchExecs" placeholder="Filtrar por script, IP o UA…" />
         </div>
-        <div class="status" id="status"></div>
+        <div class="list" id="execList"></div>
+      </section>
+    </div>
+
+    <div class="panel" id="panel-stats">
+      <section class="card">
+        <h2>Estadísticas</h2>
+        <div class="stats">
+          <div class="stat"><div class="n" id="statScripts">0</div><div class="l">Scripts</div></div>
+          <div class="stat"><div class="n" id="statExecs">0</div><div class="l">Ejecuciones</div></div>
+          <div class="stat"><div class="n" id="statStorage">—</div><div class="l">Storage</div></div>
+        </div>
         <div class="help">
-          <div><b>GET</b> <code>/api/v1</code> — lista</div>
-          <div><b>GET</b> <code>/api/v1/203028932093</code> — JSON + code</div>
-          <div><b>GET</b> <code>/api/v1/203028932093/raw</code> — solo Lua (HttpGet)</div>
-          <div><b>POST/PUT/DELETE</b> con header <code>x-admin-token</code></div>
-          <div style="margin-top:8px">Roblox:</div>
+          <div>Las ejecuciones se registran cuando un executor hace <code>GET /api/v1/:id/raw</code> (no desde el navegador).</div>
+          <div style="margin-top:8px">Se guardan las últimas 300. Con Upstash Redis también son persistentes.</div>
+        </div>
+        <div class="actions">
+          <button class="btn-ghost" id="btnRefreshStats">Actualizar stats</button>
+        </div>
+      </section>
+    </div>
+
+    <div class="panel" id="panel-api">
+      <section class="card">
+        <h2>Endpoints</h2>
+        <table class="api-table">
+          <thead>
+            <tr><th>Método</th><th>Ruta</th><th>Auth</th><th>Descripción</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>GET</td><td><code>/api</code></td><td>no</td><td>Estado + storage</td></tr>
+            <tr><td>GET</td><td><code>/api/v1</code></td><td>no</td><td>Lista de scripts</td></tr>
+            <tr><td>GET</td><td><code>/api/v1/:id</code></td><td>no</td><td>Detalle (incluye code)</td></tr>
+            <tr><td>GET</td><td><code>/api/v1/:id/raw</code></td><td>no</td><td>Código crudo (solo executor)</td></tr>
+            <tr><td>GET</td><td><code>/api/v1/executions</code></td><td>sí</td><td>Log de ejecuciones</td></tr>
+            <tr><td>DELETE</td><td><code>/api/v1/executions</code></td><td>sí</td><td>Limpiar log</td></tr>
+            <tr><td>POST</td><td><code>/api/v1</code></td><td>sí</td><td>Crear script</td></tr>
+            <tr><td>PUT</td><td><code>/api/v1/:id</code></td><td>sí</td><td>Actualizar</td></tr>
+            <tr><td>DELETE</td><td><code>/api/v1/:id</code></td><td>sí</td><td>Borrar</td></tr>
+          </tbody>
+        </table>
+        <div class="help" style="margin-top:16px">
+          <div><b>Auth:</b> header <code>x-admin-token: luau2026</code></div>
+          <div style="margin-top:8px"><b>Ejemplo Roblox:</b></div>
           <div><code>loadstring(game:HttpGet("https://TU_DOMINIO/api/v1/ID/raw"))()</code></div>
         </div>
       </section>
-
-      <section class="card">
-        <h2>Scripts en la base</h2>
-        <div class="list" id="list"></div>
-      </section>
     </div>
-  </div>
   </div>
 
   <script>
-
-
     const PANEL_PASSWORD = "luau2026";
     const AUTH_KEY = "luau_panel_auth_v1";
 
@@ -194,11 +303,8 @@
     }
 
     function setAuthed(ok) {
-      if (ok) {
-        sessionStorage.setItem(AUTH_KEY, JSON.stringify({ ok: true, p: PANEL_PASSWORD }));
-      } else {
-        sessionStorage.removeItem(AUTH_KEY);
-      }
+      if (ok) sessionStorage.setItem(AUTH_KEY, JSON.stringify({ ok: true, p: PANEL_PASSWORD }));
+      else sessionStorage.removeItem(AUTH_KEY);
     }
 
     function showApp() {
@@ -217,7 +323,7 @@
           if (tok && !tok.value) tok.value = PANEL_PASSWORD;
         } catch {}
         showApp();
-        loadList().catch(() => {});
+        initApp();
       } else {
         st.textContent = "Contraseña incorrecta";
         st.className = "status err";
@@ -239,10 +345,18 @@
 
     const $ = (id) => document.getElementById(id);
     const statusEl = $("status");
+    let allScripts = [];
+    let allExecs = [];
 
     function setStatus(msg, type) {
       statusEl.textContent = msg;
       statusEl.className = "status " + (type || "");
+    }
+
+    function setExecStatus(msg, type) {
+      const el = $("execStatus");
+      el.textContent = msg;
+      el.className = "status " + (type || "");
     }
 
     function headers() {
@@ -253,29 +367,75 @@
       return h;
     }
 
-    async function loadList() {
-      const res = await fetch("/api/v1");
-      const data = await res.json();
+    function escapeHtml(s) {
+      return String(s).replace(/[&<>"']/g, (c) =>
+        ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c])
+      );
+    }
+
+    function formatDate(iso) {
+      try {
+        const d = new Date(iso);
+        return d.toLocaleString("es-ES", { dateStyle: "short", timeStyle: "medium" });
+      } catch { return iso || ""; }
+    }
+
+    document.querySelectorAll(".tab").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll(".tab").forEach((t) => t.classList.remove("active"));
+        document.querySelectorAll(".panel").forEach((p) => p.classList.remove("active"));
+        btn.classList.add("active");
+        const id = "panel-" + btn.getAttribute("data-tab");
+        const panel = document.getElementById(id);
+        if (panel) panel.classList.add("active");
+        if (btn.getAttribute("data-tab") === "execs") loadExecs();
+        if (btn.getAttribute("data-tab") === "stats") loadStats();
+      });
+    });
+
+    async function loadStorageBadge() {
+      try {
+        const res = await fetch("/api");
+        const data = await res.json();
+        const badge = $("storageBadge");
+        if (data.upstashConfigured || (data.storage && String(data.storage).includes("upstash"))) {
+          badge.textContent = "Redis · persistente";
+          badge.className = "badge";
+        } else {
+          badge.textContent = "memory/file · puede resetear";
+          badge.className = "badge warn";
+        }
+      } catch {
+        $("storageBadge").textContent = "offline";
+        $("storageBadge").className = "badge warn";
+      }
+    }
+
+    function renderScripts(filter) {
       const list = $("list");
       list.innerHTML = "";
-      if (!data.scripts || !data.scripts.length) {
-        list.innerHTML = "<div class='item'><small>No hay scripts todavía</small></div>";
+      const q = (filter || "").toLowerCase().trim();
+      const items = allScripts.filter((s) => {
+        if (!q) return true;
+        return [s.name, s.game, s.author, s.id, s.description].join(" ").toLowerCase().includes(q);
+      });
+      if (!items.length) {
+        list.innerHTML = "<div class='empty'>No hay scripts</div>";
         return;
       }
-      for (const s of data.scripts) {
+      for (const s of items) {
         const el = document.createElement("div");
         el.className = "item";
-        el.innerHTML = `
-          <div>
-            <strong>${escapeHtml(s.name)}</strong>
-            <small>${escapeHtml(s.game || "")} · ${escapeHtml(s.author || "")}</small>
-            <div class="id">${escapeHtml(s.id)}</div>
-          </div>
-          <div class="item-actions">
-            <button class="btn-ghost" data-load="${s.id}">Edit</button>
-            <button class="btn-ghost" data-copy="${s.id}">Raw</button>
-            <button class="btn-danger" data-del="${s.id}">Del</button>
-          </div>`;
+        el.innerHTML =
+          "<div><strong>" + escapeHtml(s.name) + "</strong>" +
+          "<small>" + escapeHtml(s.game || "") + " · " + escapeHtml(s.author || "") + "</small>" +
+          "<div class='id'>" + escapeHtml(s.id) + "</div></div>" +
+          "<div class='item-actions'>" +
+          "<button class='btn-ghost' data-load='" + escapeHtml(s.id) + "'>Edit</button>" +
+          "<button class='btn-ghost' data-copy='" + escapeHtml(s.id) + "'>URL</button>" +
+          "<button class='btn-ghost' data-loadstr='" + escapeHtml(s.id) + "'>Load</button>" +
+          "<button class='btn-danger' data-del='" + escapeHtml(s.id) + "'>Del</button>" +
+          "</div>";
         list.appendChild(el);
       }
       list.querySelectorAll("[data-load]").forEach((b) =>
@@ -285,7 +445,15 @@
         b.addEventListener("click", () => {
           const url = location.origin + "/api/v1/" + b.getAttribute("data-copy") + "/raw";
           navigator.clipboard.writeText(url);
-          setStatus("Raw URL copiada: " + url, "ok");
+          setStatus("URL copiada: " + url, "ok");
+        })
+      );
+      list.querySelectorAll("[data-loadstr]").forEach((b) =>
+        b.addEventListener("click", () => {
+          const id = b.getAttribute("data-loadstr");
+          const code = 'loadstring(game:HttpGet("' + location.origin + "/api/v1/" + id + '/raw"))()';
+          navigator.clipboard.writeText(code);
+          setStatus("loadstring copiado", "ok");
         })
       );
       list.querySelectorAll("[data-del]").forEach((b) =>
@@ -293,10 +461,68 @@
       );
     }
 
-    function escapeHtml(s) {
-      return String(s).replace(/[&<>"']/g, (c) =>
-        ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c])
-      );
+    async function loadList() {
+      const res = await fetch("/api/v1");
+      const data = await res.json();
+      allScripts = data.scripts || [];
+      renderScripts($("searchScripts").value);
+      $("statScripts").textContent = String(allScripts.length);
+    }
+
+    function renderExecs(filter) {
+      const list = $("execList");
+      list.innerHTML = "";
+      const q = (filter || "").toLowerCase().trim();
+      const items = allExecs.filter((e) => {
+        if (!q) return true;
+        return [e.scriptName, e.scriptId, e.game, e.ip, e.ua].join(" ").toLowerCase().includes(q);
+      });
+      if (!items.length) {
+        list.innerHTML = "<div class='empty'>Sin ejecuciones todavía. Se registran cuando un executor pide /raw.</div>";
+        return;
+      }
+      for (const e of items) {
+        const el = document.createElement("div");
+        el.className = "item";
+        el.innerHTML =
+          "<div><strong>" + escapeHtml(e.scriptName || e.scriptId) + "</strong>" +
+          "<small>" + escapeHtml(e.game || "") + " · " + formatDate(e.at) + "</small>" +
+          "<div class='id'>" + escapeHtml(e.scriptId) + "</div>" +
+          "<div class='exec-meta'>IP: " + escapeHtml(e.ip || "—") + " · UA: " + escapeHtml((e.ua || "").slice(0, 80)) + "</div>" +
+          "</div>";
+        list.appendChild(el);
+      }
+    }
+
+    async function loadExecs() {
+      try {
+        const res = await fetch("/api/v1/executions", { headers: headers() });
+        const data = await res.json();
+        if (!data.ok) {
+          setExecStatus(data.error || "error", "err");
+          return;
+        }
+        allExecs = data.executions || [];
+        renderExecs($("searchExecs").value);
+        $("statExecs").textContent = String(allExecs.length);
+        setExecStatus(allExecs.length + " registros", "ok");
+      } catch (e) {
+        setExecStatus(String(e), "err");
+      }
+    }
+
+    async function loadStats() {
+      await loadList().catch(() => {});
+      await loadExecs().catch(() => {});
+      await loadStorageBadge();
+      try {
+        const res = await fetch("/api");
+        const data = await res.json();
+        const st = data.storage || "—";
+        $("statStorage").textContent = String(st).includes("upstash") ? "Redis" : "Local";
+      } catch {
+        $("statStorage").textContent = "?";
+      }
     }
 
     async function editScript(id) {
@@ -310,7 +536,12 @@
       $("description").value = s.description || "";
       $("author").value = s.author || "";
       $("code").value = s.code || "";
+      updateLoadPreview();
       setStatus("Cargado " + s.id, "ok");
+      document.querySelectorAll(".tab").forEach((t) => t.classList.remove("active"));
+      document.querySelectorAll(".panel").forEach((p) => p.classList.remove("active"));
+      document.querySelector('[data-tab="scripts"]').classList.add("active");
+      $("panel-scripts").classList.add("active");
     }
 
     async function delScript(id) {
@@ -321,6 +552,14 @@
       setStatus("Borrado " + id, "ok");
       loadList();
     }
+
+    function updateLoadPreview() {
+      const id = $("id").value.trim() || "ID";
+      $("loadPreview").textContent =
+        'loadstring(game:HttpGet("' + location.origin + "/api/v1/" + id + '/raw"))()';
+    }
+
+    $("id").addEventListener("input", updateLoadPreview);
 
     $("btnCreate").onclick = async () => {
       const body = {
@@ -338,13 +577,14 @@
         const text = await res.text();
         let data;
         try { data = JSON.parse(text); } catch {
-          return setStatus("Respuesta invalida del server: " + text.slice(0, 120), "err");
+          return setStatus("Respuesta invalida: " + text.slice(0, 120), "err");
         }
         if (!data.ok) {
           return setStatus((data.error || "error") + (data.hint ? " — " + data.hint : ""), "err");
         }
         setStatus("Creado " + data.script.id + (data.note ? " (" + data.note + ")" : ""), "ok");
         $("id").value = data.script.id;
+        updateLoadPreview();
         loadList();
       } catch (e) {
         setStatus("Fetch fail: " + e, "err");
@@ -371,10 +611,41 @@
     $("btnClear").onclick = () => {
       ["id", "name", "game", "description", "code"].forEach((k) => $(k).value = "");
       $("author").value = "Luauvanguard";
+      updateLoadPreview();
       setStatus("Formulario limpio");
     };
 
-    if (isAuthed()) loadList().catch((e) => setStatus(String(e), "err"));
+    $("btnCopyLoad").onclick = () => {
+      const id = $("id").value.trim();
+      if (!id) return setStatus("Pon un ID primero", "err");
+      const code = 'loadstring(game:HttpGet("' + location.origin + "/api/v1/" + id + '/raw"))()';
+      navigator.clipboard.writeText(code);
+      setStatus("loadstring copiado", "ok");
+    };
+
+    $("searchScripts").addEventListener("input", () => renderScripts($("searchScripts").value));
+    $("searchExecs").addEventListener("input", () => renderExecs($("searchExecs").value));
+    $("btnRefreshScripts").onclick = () => loadList().catch((e) => setStatus(String(e), "err"));
+    $("btnRefreshExecs").onclick = () => loadExecs();
+    $("btnRefreshStats").onclick = () => loadStats();
+    $("btnClearExecs").onclick = async () => {
+      if (!confirm("¿Limpiar todo el log de ejecuciones?")) return;
+      const res = await fetch("/api/v1/executions", { method: "DELETE", headers: headers() });
+      const data = await res.json();
+      if (!data.ok) return setExecStatus(data.error || "error", "err");
+      allExecs = [];
+      renderExecs("");
+      $("statExecs").textContent = "0";
+      setExecStatus("Log limpio", "ok");
+    };
+
+    function initApp() {
+      updateLoadPreview();
+      loadStorageBadge();
+      loadList().catch((e) => setStatus(String(e), "err"));
+    }
+
+    if (isAuthed()) initApp();
   </script>
 </body>
 </html>
